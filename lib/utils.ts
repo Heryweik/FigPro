@@ -1,4 +1,4 @@
-import jsPDF from "jspdf";
+/* import jsPDF from "jspdf"; */
 import { twMerge } from "tailwind-merge";
 import { type ClassValue, clsx } from "clsx";
 
@@ -38,6 +38,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// Esto es para los usuarios que no tienen cuenta
 export function generateRandomName(): string {
   const randomAdjective =
     adjectives[Math.floor(Math.random() * adjectives.length)];
@@ -98,7 +99,7 @@ export const getShapeInfo = (shapeType: string) => {
   }
 };
 
-export const exportToPdf = () => {
+/* export const exportToPdf = () => {
   const canvas = document.querySelector("canvas");
 
   if (!canvas) return;
@@ -118,4 +119,4 @@ export const exportToPdf = () => {
 
   // download the pdf
   doc.save("canvas.pdf");
-};
+}; */

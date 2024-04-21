@@ -8,6 +8,8 @@ import {
   ModifyShape,
 } from "@/types/type";
 
+//Aqui se crean las formas que se pueden dibujar en el canvas
+
 export const createRectangle = (pointer: PointerEvent) => {
   const rect = new fabric.Rect({
     left: pointer.x,

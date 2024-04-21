@@ -7,30 +7,28 @@ export default function CursorChat({
   setCursorState,
   updateMyPresence,
 }: CursorChatProps) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateMyPresence({ message: e.target.value });
+    setCursorState({
+      mode: CursorMode.Chat,
+      previousMessage: null,
+      message: e.target.value,
+    });
+  };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        updateMyPresence({message: e.target.value});
-        setCursorState({
-            mode: CursorMode.Chat,
-            previousMessage: null,
-            message: e.target.value,
-        });
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      setCursorState({
+        mode: CursorMode.Chat,
+        previousMessage: cursorState.message,
+        message: "",
+      });
+    } else if (e.key === "Escape") {
+      setCursorState({
+        mode: CursorMode.Hidden,
+      });
     }
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            setCursorState({
-                mode: CursorMode.Chat,
-                previousMessage: cursorState.message,
-                message: "",
-            })
-
-        } else if (e.key === "Escape") {
-            setCursorState({
-                mode: CursorMode.Hidden,
-            })
-        }
-    }
+  };
 
   return (
     <div
@@ -41,26 +39,32 @@ export default function CursorChat({
     >
       {cursorState.mode === CursorMode.Chat && (
         <>
-        {/* No le veo mucho sentido a este otro cursor :v */}
+          {/* No le veo mucho sentido a este otro cursor :v */}
           <CursorSVG color="#000" />
 
-            {/* Disenio del input */}
-          <div className="absolute left-2 top-5 bg-blue-500 px-4 py-2 text-sm leading-relaxed text-white rounded-[20px]">
+          {/* Disenio del input */}
+          <div
+            className="absolute left-2 top-5 bg-blue-500 px-4 py-2 text-sm leading-relaxed text-white rounded-[20px]"
+            // Evitamos que el evento se propague al contenedor padre, esto es porque sin esto el evento se propaga al apretar la tecla e y habre las reacciones
+            onKeyUp={(e) => e.stopPropagation()}
+          >
             {cursorState.previousMessage && (
-                <div>{cursorState.previousMessage}</div>
+              <div>{cursorState.previousMessage}</div>
             )}
             <input
-                className="z-10 w-60 border-none bg-transparent text-white placeholder-blue-300 outline-none"
-                autoFocus={true}
-                onChange={handleChange}
-                onKeyDown={handleKeyDown}
-                placeholder={cursorState.previousMessage ? "" : "Type a message..."}
-                value={cursorState.message}
-                maxLength={50}
+              className="z-10 w-60 border-none bg-transparent text-white placeholder-blue-300 outline-none"
+              autoFocus={true}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              placeholder={
+                cursorState.previousMessage ? "" : "Type a message..."
+              }
+              value={cursorState.message}
+              maxLength={50}
             />
           </div>
         </>
-      )} 
+      )}
     </div>
   );
 }

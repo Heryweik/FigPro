@@ -77,6 +77,10 @@ export const handleDelete = (
   canvas.requestRenderAll();
 };
 
+
+// Aqui se crea una función handleKeyDown que escucha diferentes eventos de teclado, se pueden agregar más eventos si es necesario
+
+
 // create a handleKeyDown function that listen to different keydown events
 export const handleKeyDown = ({
   e,

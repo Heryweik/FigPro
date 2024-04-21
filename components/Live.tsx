@@ -1,4 +1,9 @@
-import { useBroadcastEvent, useEventListener, useMyPresence, useOthers } from "@/liveblocks.config";
+import {
+  useBroadcastEvent,
+  useEventListener,
+  useMyPresence,
+  useOthers,
+} from "@/liveblocks.config";
 import LiveCursors from "./cursor/LiveCursors";
 import { useCallback, useEffect, useState } from "react";
 import CursorChat from "./cursor/CursorChat";
@@ -7,8 +12,12 @@ import ReactionSelector from "./reaction/ReactionButton";
 import FlyingReaction from "./reaction/FlyingReaction";
 import useInterval from "@/hooks/useInterval";
 
+type Props = {
+  canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
+};
+
 // Este componente se encarga de renderizar los cursores de los otros usuarios
-export default function Live() {
+export default function Live({ canvasRef }: Props) {
   // Estos son hooks de liveblocks que nos permiten obtener la presencia de los otros usuarios
   const others = useOthers();
   const [{ cursor }, updateMyPresence] = useMyPresence() as any;
@@ -22,13 +31,12 @@ export default function Live() {
   // Este hook nos permite enviar eventos a todos los usuarios conectados, de esta forma podran ver los emojis
   const broadcast = useBroadcastEvent();
 
-  
   useInterval(() => {
     // Limpiamos las reacciones que tengan más de 4 segundos
     setReaction((reactions) =>
       reactions.filter((r) => r.timestamp > Date.now() - 4000)
     );
-  }, 1000)
+  }, 1000);
 
   // Este es un hook propio que permite ejecutar una función cada cierto tiempo, en este caso cada 100ms, este hook recibe una funcion y un delay
   useInterval(() => {
@@ -48,30 +56,29 @@ export default function Live() {
         ])
       );
 
-        // Enviamos el evento a todos los usuarios conectados
-        broadcast({
-            x: cursor.x,
-            y: cursor.y,
-            value: cursorState.reaction,
-        })
+      // Enviamos el evento a todos los usuarios conectados
+      broadcast({
+        x: cursor.x,
+        y: cursor.y,
+        value: cursorState.reaction,
+      });
     }
   }, 200);
 
-
-    // Escuchamos los eventos de reacción de los otros usuarios
+  // Escuchamos los eventos de reacción de los otros usuarios
   useEventListener((eventData) => {
     const event = eventData.event as ReactionEvent;
 
     setReaction((reactions) =>
-        reaction.concat([
-          {
-            point: { x: event.x, y: event.y },
-            value: event.value,
-            timestamp: Date.now(),
-          },
-        ])
-      );
-  })
+      reaction.concat([
+        {
+          point: { x: event.x, y: event.y },
+          value: event.value,
+          timestamp: Date.now(),
+        },
+      ])
+    );
+  });
 
   // Actualizamos la presencia con la posición del cursor relativa al contenedor
   // funcion que se ejecuta cuando el cursor se mueve dentro del contenedor
@@ -162,13 +169,14 @@ export default function Live() {
 
   return (
     <div
+      id="canvas"
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       className="h-[100vh] w-full flex justify-center items-center text-center"
     >
-      <h1 className="text-2xl text-white">LiveBlock figma</h1>
+      <canvas ref={canvasRef} />
 
       {reaction.map((r) => (
         <FlyingReaction
