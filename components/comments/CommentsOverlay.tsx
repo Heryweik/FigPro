@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { useCallback, useRef } from "react";
 import { ThreadData } from "@liveblocks/client";
@@ -13,7 +13,8 @@ type OverlayThreadProps = {
   maxZIndex: number;
 };
 
-export const CommentsOverlay = () => {
+export function CommentsOverlay() {
+
   /**
    * We're using the useThreads hook to get the list of threads
    * in the room.
@@ -25,6 +26,9 @@ export const CommentsOverlay = () => {
   // get the max z-index of a thread
   const maxZIndex = useMaxZIndex();
 
+  // Vemos los comentarios
+  /* console.log(threads) */
+
   return (
     <div>
       {threads
@@ -33,8 +37,8 @@ export const CommentsOverlay = () => {
           <OverlayThread key={thread.id} thread={thread} maxZIndex={maxZIndex} />
         ))}
     </div>
-  );
-};
+  )
+}
 
 const OverlayThread = ({ thread, maxZIndex }: OverlayThreadProps) => {
   /**
@@ -50,7 +54,9 @@ const OverlayThread = ({ thread, maxZIndex }: OverlayThreadProps) => {
    *
    * useUser: https://liveblocks.io/docs/api-reference/liveblocks-react#useUser
    */
-  const { isLoading } = useUser(thread.comments[0].userId);
+
+  // Estaba en 0 y lo cambie a 1
+  /* const { isLoading } = useUser(thread.comments[0].userId); */
 
   // We're using a ref to get the thread element to position it
   const threadRef = useRef<HTMLDivElement>(null);
@@ -70,9 +76,10 @@ const OverlayThread = ({ thread, maxZIndex }: OverlayThreadProps) => {
     });
   }, [thread, editThreadMetadata, maxZIndex]);
 
-  if (isLoading) {
+  // Este loading hace que muera la aplicacion
+  /* if (isLoading) {
     return null;
-  }
+  } */
 
   return (
     <div
