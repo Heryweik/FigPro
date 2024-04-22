@@ -1,4 +1,4 @@
-/* import jsPDF from "jspdf"; */
+import jsPDF from "jspdf";
 import { twMerge } from "tailwind-merge";
 import { type ClassValue, clsx } from "clsx";
 
@@ -99,7 +99,9 @@ export const getShapeInfo = (shapeType: string) => {
   }
 };
 
-/* export const exportToPdf = () => {
+export const exportToPdf = () => {
+  // get the canvas
+  // El querySelector() obtiene el primer elemento que coincida con un selector CSS especificado
   const canvas = document.querySelector("canvas");
 
   if (!canvas) return;
@@ -119,4 +121,4 @@ export const getShapeInfo = (shapeType: string) => {
 
   // download the pdf
   doc.save("canvas.pdf");
-}; */
+};

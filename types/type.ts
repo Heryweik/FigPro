@@ -1,5 +1,6 @@
 import { BaseUserMeta, User } from "@liveblocks/client";
 import { Gradient, Pattern } from "fabric/fabric-impl";
+import React from "react";
 
 // enum sirve para definir un conjunto de constantes con nombre
 export enum CursorMode {

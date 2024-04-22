@@ -11,13 +11,14 @@ import {
   handleCanvasMouseDown,
   handleCanvasMouseUp,
   handleCanvasObjectModified,
+  handleCanvasObjectScaling,
+  handleCanvasSelectionCreated,
   handleCanvaseMouseMove,
   handleResize,
   initializeFabric,
   renderCanvas,
 } from "@/lib/canvas";
-import { icons } from "lucide-react";
-import { ActiveElement } from "@/types/type";
+import { ActiveElement, Attributes } from "@/types/type";
 import { useMutation, useRedo, useStorage, useUndo } from "@/liveblocks.config";
 import { defaultNavElement } from "@/constants";
 import { handleDelete, handleKeyDown } from "@/lib/key-events";
@@ -35,6 +36,19 @@ export default function Page() {
   const selectedShapeRef = useRef<string | null>(null);
   const activeObjectRef = useRef<fabric.Object | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const isEditingRef = useRef<boolean>(false);
+
+  // Hook to set the element attributes
+  // Esto es para que se puedan modificar las propiedades de los objetos, como el tamanio, color, etc
+  const [elementAttributes, setElementAttributes] = useState<Attributes>({
+    width: '',
+    height: '',
+    fontSize: '',
+    fontFamily: '',
+    fontWeight: '',
+    fill: '#aabbcc',
+    stroke: '#aabbcc',
+  })
 
   // Hook to get the canvasObjects from the storage
   // Esto es para que los objetos que se dibujan en el canvas se guarden en el storage
@@ -198,6 +212,23 @@ export default function Page() {
       });
     });
 
+    // Cuando se selecciona un objeto, Obtenemos las propiedades del objeto,asi como su width, height, etc
+    canvas.on("selection:created", (options: any) => {
+      handleCanvasSelectionCreated({
+        options,
+        isEditingRef,
+        setElementAttributes,
+      })
+    })
+
+    // Cuando se escala un objeto, se actualiza el objeto en el storage
+    canvas.on("object:scaling", (options: any) => {
+      handleCanvasObjectScaling({
+        options,
+        setElementAttributes,
+      })
+    })
+
     // Ayuda a cambiar el tamanio de los objetos
     window.addEventListener("resize", () => {
       // no da error con "canvas"
@@ -256,7 +287,14 @@ export default function Page() {
 
         <Live canvasRef={canvasRef} />
 
-        <RightSidebar />
+        <RightSidebar 
+          elementAttributes={elementAttributes}
+          setElementAttributes={setElementAttributes}
+          fabricRef={fabricRef}
+          activeObjectRef={activeObjectRef}
+          isEditingRef={isEditingRef}
+          syncShapeInStorage={syncShapeInStorage}
+        />
       </section>
     </main>
   );
