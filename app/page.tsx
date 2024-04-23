@@ -14,6 +14,7 @@ import {
   handleCanvasObjectScaling,
   handleCanvasSelectionCreated,
   handleCanvaseMouseMove,
+  handlePathCreated,
   handleResize,
   initializeFabric,
   renderCanvas,
@@ -226,6 +227,14 @@ export default function Page() {
       handleCanvasObjectScaling({
         options,
         setElementAttributes,
+      })
+    })
+
+    // Cuando se crea un dibujo manual, se actualiza el objeto en el storage
+    canvas.on("path:created", (options: any) => {
+      handlePathCreated({
+        options,
+        syncShapeInStorage,
       })
     })
 
